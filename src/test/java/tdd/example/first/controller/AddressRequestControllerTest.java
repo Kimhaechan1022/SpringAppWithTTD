@@ -37,6 +37,19 @@ public class AddressRequestControllerTest {
         assertEquals(EXPECTED_METHOD_STRING,httpMethod);
 
     }
+
+    @Test
+    public void testGetMapping() throws Exception {
+        MvcResult result = (MvcResult) mockMvc.perform(get("/test_url2"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(
+                        containsString("This is response of get mapping")))
+                .andDo(print())
+                .andReturn();
+        String httpMethod = result.getRequest().getMethod();
+
+        assertEquals(EXPECTED_METHOD_STRING,httpMethod);
+    }
 }
 
 
