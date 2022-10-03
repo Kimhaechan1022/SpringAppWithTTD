@@ -18,6 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class ApiControllerTest {
     String EXPECTED_METHOD_STRING = "GET";
+    String EXPECTED_RESULT_STRING = "{\"id\":0,\"title\":\"notice0\",\"content\":\"content of notice0\",\"regDate\":\"2022-09-30T00:00:00\"}";
 
     @Autowired
     private MockMvc mockMvc;
@@ -33,5 +34,17 @@ public class ApiControllerTest {
                 .andReturn();
         String httpMethod = result.getRequest().getMethod();
         assertEquals(EXPECTED_METHOD_STRING,httpMethod);
+    }
+
+
+    @Test
+    public void testRestControllerGetMember() throws Exception {
+
+        MvcResult result = (MvcResult) mockMvc.perform(get("/api/notice"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+        String resultString = result.getResponse().getContentAsString();
+        assertEquals(EXPECTED_RESULT_STRING,resultString);
     }
 }
