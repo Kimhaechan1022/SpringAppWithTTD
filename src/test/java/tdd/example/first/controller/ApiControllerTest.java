@@ -11,7 +11,8 @@ import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @WebMvcTest(ApiController.class)
@@ -33,7 +34,7 @@ public class ApiControllerTest {
                 .andDo(print())
                 .andReturn();
         String httpMethod = result.getRequest().getMethod();
-        assertEquals(EXPECTED_METHOD_STRING,httpMethod);
+        assertEquals(EXPECTED_METHOD_STRING, httpMethod);
     }
 
 
@@ -45,6 +46,19 @@ public class ApiControllerTest {
                 .andDo(print())
                 .andReturn();
         String resultString = result.getResponse().getContentAsString();
-        assertEquals(EXPECTED_RESULT_STRING,resultString);
+        assertEquals(EXPECTED_RESULT_STRING, resultString);
     }
+
+    @Test
+    public void testRestControllerGetMemberList() throws Exception {
+
+        MvcResult result = (MvcResult) mockMvc.perform(get("/api/notice2"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+        String resultString = result.getResponse().getContentAsString();
+        String expectedString = "[{\"id\":0,\"title\":\"notice0\",\"content\":\"content of notice0\",\"regDate\":\"2022-09-30T00:00:00\"},{\"id\":1,\"title\":\"notice1\",\"content\":\"content of notice1\",\"regDate\":\"2022-09-30T00:01:00\"}]";
+        assertEquals(resultString, expectedString);
+    }
+
 }
