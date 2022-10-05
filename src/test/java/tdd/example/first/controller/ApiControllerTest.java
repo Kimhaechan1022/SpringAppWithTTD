@@ -39,26 +39,46 @@ public class ApiControllerTest {
 
 
     @Test
-    public void testRestControllerGetMember() throws Exception {
+    public void testRestControllerGetModel() throws Exception {
 
         MvcResult result = (MvcResult) mockMvc.perform(get("/api/notice"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andReturn();
         String resultString = result.getResponse().getContentAsString();
-        assertEquals(EXPECTED_RESULT_STRING, resultString);
+
+        assertEquals(resultString.contains("id"), true);
+        assertEquals(resultString.contains("title"), true);
+        assertEquals(resultString.contains("content"), true);
+        assertEquals(resultString.contains("regDate"), true);
+
     }
 
     @Test
-    public void testRestControllerGetMemberList() throws Exception {
+    public void testRestControllerGetModelList() throws Exception {
 
         MvcResult result = (MvcResult) mockMvc.perform(get("/api/notice2"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andReturn();
+
         String resultString = result.getResponse().getContentAsString();
         String expectedString = "[{\"id\":0,\"title\":\"notice0\",\"content\":\"content of notice0\",\"regDate\":\"2022-09-30T00:00:00\"},{\"id\":1,\"title\":\"notice1\",\"content\":\"content of notice1\",\"regDate\":\"2022-09-30T00:01:00\"}]";
         assertEquals(resultString, expectedString);
+
+    }
+
+    @Test
+    public void testRestControllerIsNotNull() throws Exception {
+
+        ApiController controller = new ApiController();
+        try{
+            controller.isNotNull(null);
+        }
+        catch (Exception e){
+            assertEquals(e.getMessage(),"exception, caused by null list");
+        }
+
     }
 
 }

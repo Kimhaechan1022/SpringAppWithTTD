@@ -31,15 +31,16 @@ public class ApiController {
     public List<NoticeModel> getNotice2(){
         List<NoticeModel> noticeList = new ArrayList<>();
 
+        // setter
         NoticeModel notice1 = new NoticeModel();
         notice1.setId(0);
         notice1.setTitle("notice0");
         notice1.setContent("content of notice0");
         LocalDateTime regDate = LocalDateTime.of(2022,9,30,0,0);
         notice1.setRegDate(regDate);
-
         LocalDateTime regDate2 = LocalDateTime.of(2022,9,30,0,1);
         noticeList.add(notice1);
+
         // builder
         noticeList.add(NoticeModel.builder()
                 .id(1)
@@ -47,25 +48,26 @@ public class ApiController {
                 .content("content of notice1")
                 .regDate(regDate2)
                 .build());
-        if (isNoticeNotNull(noticeList) == true){
-            return noticeList;
-        }
-        else{
-            // it must change to handling exception
-            return null;
-        }
 
+        try {
+            if((isNotNull(noticeList) == true)){
+                return noticeList;
+            }
+        } catch (Exception e) {
+            // Pass
+        }
+        return null;
     }
 
-    // Todo : if size<0 then handling exeption
-    public boolean isNoticeNotNull(List<NoticeModel> noticeList){
-        if (noticeList.size() > 0){
-            return true;
+    public boolean isNotNull(List<NoticeModel> noticeList) throws Exception {
+        if(noticeList != null){
+            if (noticeList.size() > 0){
+                return true;
+            }
         }
         else{
-            return false;
+            throw new Exception("exception, caused by null list");
         }
-
+        return false;
     }
-
 }
