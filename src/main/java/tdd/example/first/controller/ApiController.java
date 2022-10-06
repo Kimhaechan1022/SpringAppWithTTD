@@ -1,7 +1,6 @@
 package tdd.example.first.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import tdd.example.first.model.NoticeModel;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -69,5 +68,31 @@ public class ApiController {
             throw new Exception("exception, caused by null list");
         }
         return false;
+    }
+
+    @PostMapping("/api/requestDataToModelData")
+    public NoticeModel responseModelData(@RequestParam String title, @RequestParam String content){
+        NoticeModel model = NoticeModel.builder()
+                .id(0)
+                .content(content)
+                .title(title)
+                .regDate(null)
+                .build();
+
+        return model;
+    }
+
+    @PostMapping("/api/requestDataToModelData2")
+    public NoticeModel responseModelData2(NoticeModel model){
+        model.setRegDate(null);
+        model.setId(0);
+        return model;
+    }
+
+    @PostMapping("/api/requestDataToModelDataJson")
+    public NoticeModel responseModelDataJson(@RequestBody NoticeModel model){
+        model.setRegDate(null);
+        model.setId(0);
+        return model;
     }
 }

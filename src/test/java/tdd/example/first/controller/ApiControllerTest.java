@@ -4,12 +4,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -78,6 +80,73 @@ public class ApiControllerTest {
         catch (Exception e){
             assertEquals(e.getMessage(),"exception, caused by null list");
         }
+
+    }
+
+    @Test
+    public void testRequestDataToModel() throws Exception {
+
+        String requestTitle = "title1";
+        String requestContent = "content1";
+
+        MvcResult result = (MvcResult) mockMvc.perform(post("/api/requestDataToModelData")
+                        .param("title",requestTitle)
+                        .param("content",requestContent))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+        String httpMethod = result.getRequest().getMethod();
+        assertEquals("POST",httpMethod);
+
+
+        String resultString = result.getResponse().getContentAsString();
+        assertEquals(true,resultString.contains(requestTitle));
+        assertEquals(true,resultString.contains(requestContent));
+
+    }
+
+
+
+    @Test
+    public void testRequestDataToModel2() throws Exception {
+
+        String requestTitle = "title1";
+        String requestContent = "content1";
+
+        MvcResult result = (MvcResult) mockMvc.perform(post("/api/requestDataToModelData2")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("title",requestTitle)
+                        .param("content",requestContent))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+        String httpMethod = result.getRequest().getMethod();
+        assertEquals("POST",httpMethod);
+
+
+        String resultString = result.getResponse().getContentAsString();
+        assertEquals(true,resultString.contains(requestTitle));
+        assertEquals(true,resultString.contains(requestContent));
+
+    }
+
+    @Test
+    public void testRequestDataToModel3() throws Exception {
+
+        String content = "{\"title\": \"t1\", \"content\": \"c1\"}";
+
+        MvcResult result = (MvcResult) mockMvc.perform(post("/api/requestDataToModelDataJson")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+        String httpMethod = result.getRequest().getMethod();
+        assertEquals("POST",httpMethod);
+
+        String resultString = result.getResponse().getContentAsString();
+        assertEquals(true,resultString.contains("t1"));
+        assertEquals(true,resultString.contains("c1"));
 
     }
 
