@@ -70,18 +70,18 @@ public class ApiControllerTest {
 
     }
 
-    @Test
-    public void testRestControllerIsNotNull() throws Exception {
-
-        ApiController controller = new ApiController();
-        try{
-            controller.isNotNull(null);
-        }
-        catch (Exception e){
-            assertEquals(e.getMessage(),"exception, caused by null list");
-        }
-
-    }
+//    @Test
+//    public void testRestControllerIsNotNull() throws Exception {
+//
+//        ApiController controller = new ApiController();
+//        try{
+//            controller.isNotNull(null);
+//        }
+//        catch (Exception e){
+//            assertEquals(e.getMessage(),"exception, caused by null list");
+//        }
+//
+//    }
 
     @Test
     public void testRequestDataToModel() throws Exception {
@@ -110,13 +110,11 @@ public class ApiControllerTest {
     @Test
     public void testRequestDataToModel2() throws Exception {
 
-        String requestTitle = "title1";
-        String requestContent = "content1";
+        String contentString = "title=t1&content=c1";
 
         MvcResult result = (MvcResult) mockMvc.perform(post("/api/requestDataToModelData2")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("title",requestTitle)
-                        .param("content",requestContent))
+                        .content(contentString))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andReturn();
@@ -125,8 +123,8 @@ public class ApiControllerTest {
 
 
         String resultString = result.getResponse().getContentAsString();
-        assertEquals(true,resultString.contains(requestTitle));
-        assertEquals(true,resultString.contains(requestContent));
+        assertEquals(true,resultString.contains("t1"));
+        assertEquals(true,resultString.contains("c1"));
 
     }
 

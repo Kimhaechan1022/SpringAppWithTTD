@@ -1,13 +1,23 @@
 package tdd.example.first.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import tdd.example.first.entity.Notice;
+import tdd.example.first.model.NoticeInput;
 import tdd.example.first.model.NoticeModel;
+import tdd.example.first.repository.NoticeRepository;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+
+@RequiredArgsConstructor
 @RestController
 public class ApiController {
+
+    // requiredArgConst 어노테이션 이해 필요 13/18분
+    private final NoticeRepository noticeRepository;
 
     @GetMapping("/api/test_url")
     public String MappingRequest3(){
@@ -83,7 +93,7 @@ public class ApiController {
     }
 
     @PostMapping("/api/requestDataToModelData2")
-    public NoticeModel responseModelData2(NoticeModel model){
+    public NoticeModel responseModelData2(@ModelAttribute NoticeModel model){
         model.setRegDate(null);
         model.setId(0);
         return model;
@@ -95,4 +105,18 @@ public class ApiController {
         model.setId(0);
         return model;
     }
+
+
+    @PostMapping("/api/notice")
+    public Notice addNotice(@RequestBody NoticeInput noticeInput){
+        Notice notice = Notice.builder()
+                .title(noticeInput.getTitle())
+                .content(noticeInput.getContent())
+                .regDate(LocalDateTime.now())
+                .build();
+        noticeRepository.save(notice);
+
+        return notice;
+    }
+
 }
