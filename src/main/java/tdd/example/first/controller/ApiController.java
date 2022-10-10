@@ -16,7 +16,6 @@ import java.util.List;
 @RestController
 public class ApiController {
 
-    // requiredArgConst 어노테이션 이해 필요 13/18분
     private final NoticeRepository noticeRepository;
 
     @GetMapping("/api/test_url")
@@ -119,4 +118,17 @@ public class ApiController {
         return notice;
     }
 
+    @PostMapping("/api/notice2")
+    public Notice addNotice2(@RequestBody NoticeInput noticeInput){
+        Notice notice = Notice.builder()
+                .title(noticeInput.getTitle())
+                .content(noticeInput.getContent())
+                .regDate(LocalDateTime.now())
+                .likes(0)
+                .viewCnt(0)
+                .build();
+        Notice resultNotice = noticeRepository.save(notice);
+
+        return resultNotice;
+    }
 }

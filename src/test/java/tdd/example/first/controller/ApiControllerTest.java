@@ -1,12 +1,19 @@
 package tdd.example.first.controller;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import tdd.example.first.repository.NoticeRepository;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,7 +24,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@WebMvcTest(ApiController.class)
+//@WebMvcTest(ApiController.class) //unit class context
+@SpringBootTest   //full application context
 @AutoConfigureMockMvc
 public class ApiControllerTest {
     String EXPECTED_METHOD_STRING = "GET";
@@ -109,9 +117,7 @@ public class ApiControllerTest {
 
     @Test
     public void testRequestDataToModel2() throws Exception {
-
         String contentString = "title=t1&content=c1";
-
         MvcResult result = (MvcResult) mockMvc.perform(post("/api/requestDataToModelData2")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .content(contentString))
@@ -145,6 +151,25 @@ public class ApiControllerTest {
         String resultString = result.getResponse().getContentAsString();
         assertEquals(true,resultString.contains("t1"));
         assertEquals(true,resultString.contains("c1"));
+
+    }
+
+    @Test
+    @DisplayName("Notice 정보에 좋아요와 조회수를 0으로 초기화하는 Test")
+    public void testRequestDataToModel4() throws Exception {
+
+        String content = "{\"title\": \"t1\", \"content\": \"c1\"}";
+
+        MvcResult result = (MvcResult) mockMvc.perform(post("/api/notice2")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andDo(print())
+                .andReturn();
+        String httpMethod = result.getRequest().getMethod();
+        assertEquals("POST",httpMethod);
+
+        String resultString = result.getResponse().getContentAsString();
+
 
     }
 
