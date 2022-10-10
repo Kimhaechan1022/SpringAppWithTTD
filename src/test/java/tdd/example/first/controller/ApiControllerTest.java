@@ -178,4 +178,21 @@ public class ApiControllerTest {
 
     }
 
+    @Test
+    @DisplayName("id 로 조회된 데이터를 가저오는지 Test")
+    public void testRequestDataToModel5() throws Exception {
+
+        String content = "{\"title\": \"t\", \"content\": \"c\"}";
+
+        MvcResult result = (MvcResult) mockMvc.perform(get("/api/notice/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andDo(print())
+                .andReturn();
+
+        String resultString = result.getResponse().getContentAsString();
+
+
+    }
+
 }

@@ -10,6 +10,7 @@ import tdd.example.first.repository.NoticeRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @RequiredArgsConstructor
@@ -133,6 +134,14 @@ public class ApiController {
     }
     @GetMapping("/api/notice/{id}")
     public Notice notice(@PathVariable Long id){
+
+        Optional<Notice> notice = noticeRepository.findById(id);
+        if (notice.isPresent()){
+            return notice.get();
+        }
+
+        // 나중에 throw except 하는게 더 좋음
         return null;
+
     }
 }
