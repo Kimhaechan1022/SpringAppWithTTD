@@ -131,4 +131,8 @@ public class ApiController {
 
         return resultNotice;
     }
+    @GetMapping("/api/notice/{id}")
+    public Notice notice(@PathVariable Long id){
+        return null;
+    }
 }

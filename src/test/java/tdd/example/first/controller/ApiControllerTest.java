@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
@@ -24,8 +25,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
+//@WebMvcTest(ApiController.class)
+//@MockBean(NoticeRepository.class)
 //@WebMvcTest(ApiController.class) //unit class context
-@SpringBootTest   //full application context
+//@SpringBootTest   //full application context
+//@MockBean // repository bean adding
+@SpringBootTest
 @AutoConfigureMockMvc
 public class ApiControllerTest {
     String EXPECTED_METHOD_STRING = "GET";
@@ -158,7 +163,7 @@ public class ApiControllerTest {
     @DisplayName("Notice 정보에 좋아요와 조회수를 0으로 초기화하는 Test")
     public void testRequestDataToModel4() throws Exception {
 
-        String content = "{\"title\": \"t1\", \"content\": \"c1\"}";
+        String content = "{\"title\": \"t\", \"content\": \"c\"}";
 
         MvcResult result = (MvcResult) mockMvc.perform(post("/api/notice2")
                         .contentType(MediaType.APPLICATION_JSON)
