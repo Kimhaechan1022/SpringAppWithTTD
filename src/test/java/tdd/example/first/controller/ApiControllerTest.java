@@ -3,15 +3,10 @@ package tdd.example.first.controller;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import tdd.example.first.repository.NoticeRepository;
@@ -24,14 +19,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
-//@WebMvcTest(ApiController.class)
-//@MockBean(NoticeRepository.class)
-//@WebMvcTest(ApiController.class) //unit class context
-//@SpringBootTest   //full application context
-//@MockBean // repository bean adding
 @SpringBootTest
 @AutoConfigureMockMvc
+@MockBean(NoticeRepository.class)
 public class ApiControllerTest {
     String EXPECTED_METHOD_STRING = "GET";
     String EXPECTED_RESULT_STRING = "{\"id\":0,\"title\":\"notice0\",\"content\":\"content of notice0\",\"regDate\":\"2022-09-30T00:00:00\"}";
@@ -39,8 +29,12 @@ public class ApiControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private NoticeRepository noticeRepository;
+
     @Test
-    public void testRestControllerGetMapping() throws Exception {
+    @DisplayName("Get 요청 동작")
+    public void testHttpGetMethod() throws Exception {
 
         MvcResult result = (MvcResult) mockMvc.perform(get("/api/test_url"))
                 .andExpect(status().isOk())
@@ -54,7 +48,8 @@ public class ApiControllerTest {
 
 
     @Test
-    public void testRestControllerGetModel() throws Exception {
+    @DisplayName("Get 요청 응답")
+    public void testGetMethodResponse() throws Exception {
 
         MvcResult result = (MvcResult) mockMvc.perform(get("/api/notice"))
                 .andExpect(status().isOk())
@@ -70,9 +65,10 @@ public class ApiControllerTest {
     }
 
     @Test
-    public void testRestControllerGetModelList() throws Exception {
+    @DisplayName("다수의 모델을 포함한 리스트 검증")
+    public void testModelList() throws Exception {
 
-        MvcResult result = (MvcResult) mockMvc.perform(get("/api/notice2"))
+        MvcResult result = (MvcResult) mockMvc.perform(get("/api/noticeList"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andReturn();
@@ -83,44 +79,45 @@ public class ApiControllerTest {
 
     }
 
-//    @Test
-//    public void testRestControllerIsNotNull() throws Exception {
-//
-//        ApiController controller = new ApiController();
-//        try{
-//            controller.isNotNull(null);
-//        }
-//        catch (Exception e){
-//            assertEquals(e.getMessage(),"exception, caused by null list");
-//        }
-//
-//    }
+    @Test
+    public void testRestControllerIsNotNull() throws Exception {
+
+        ApiController controller = new ApiController(noticeRepository);
+        try{
+            controller.isNotNull(null);
+        }
+        catch (Exception e){
+            assertEquals(e.getMessage(),"exception, caused by null list");
+        }
+
+    }
 
     @Test
+    @DisplayName(" request parameter 지정")
     public void testRequestDataToModel() throws Exception {
 
         String requestTitle = "title1";
         String requestContent = "content1";
 
         MvcResult result = (MvcResult) mockMvc.perform(post("/api/requestDataToModelData")
-                        .param("title",requestTitle)
-                        .param("content",requestContent))
+                        .param("title", requestTitle)
+                        .param("content", requestContent))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andReturn();
         String httpMethod = result.getRequest().getMethod();
-        assertEquals("POST",httpMethod);
+        assertEquals("POST", httpMethod);
 
 
         String resultString = result.getResponse().getContentAsString();
-        assertEquals(true,resultString.contains(requestTitle));
-        assertEquals(true,resultString.contains(requestContent));
+        assertEquals(true, resultString.contains(requestTitle));
+        assertEquals(true, resultString.contains(requestContent));
 
     }
 
 
-
     @Test
+    @DisplayName("form_urlencoded 방식의 요청")
     public void testRequestDataToModel2() throws Exception {
         String contentString = "title=t1&content=c1";
         MvcResult result = (MvcResult) mockMvc.perform(post("/api/requestDataToModelData2")
@@ -130,16 +127,17 @@ public class ApiControllerTest {
                 .andDo(print())
                 .andReturn();
         String httpMethod = result.getRequest().getMethod();
-        assertEquals("POST",httpMethod);
+        assertEquals("POST", httpMethod);
 
 
         String resultString = result.getResponse().getContentAsString();
-        assertEquals(true,resultString.contains("t1"));
-        assertEquals(true,resultString.contains("c1"));
+        assertEquals(true, resultString.contains("t1"));
+        assertEquals(true, resultString.contains("c1"));
 
     }
 
     @Test
+    @DisplayName("json 방식의 요청")
     public void testRequestDataToModel3() throws Exception {
 
         String content = "{\"title\": \"t1\", \"content\": \"c1\"}";
@@ -151,11 +149,11 @@ public class ApiControllerTest {
                 .andDo(print())
                 .andReturn();
         String httpMethod = result.getRequest().getMethod();
-        assertEquals("POST",httpMethod);
+        assertEquals("POST", httpMethod);
 
         String resultString = result.getResponse().getContentAsString();
-        assertEquals(true,resultString.contains("t1"));
-        assertEquals(true,resultString.contains("c1"));
+        assertEquals(true, resultString.contains("t1"));
+        assertEquals(true, resultString.contains("c1"));
 
     }
 
@@ -171,7 +169,7 @@ public class ApiControllerTest {
                 .andDo(print())
                 .andReturn();
         String httpMethod = result.getRequest().getMethod();
-        assertEquals("POST",httpMethod);
+        assertEquals("POST", httpMethod);
 
         String resultString = result.getResponse().getContentAsString();
 
@@ -189,10 +187,7 @@ public class ApiControllerTest {
                         .content(content))
                 .andDo(print())
                 .andReturn();
-
         String resultString = result.getResponse().getContentAsString();
-
-
     }
 
 }
