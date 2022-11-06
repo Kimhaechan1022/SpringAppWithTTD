@@ -1,5 +1,6 @@
 package tdd.example.first.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import tdd.example.first.repository.NoticeRepository;
 
+import java.io.IOException;
+import java.util.Map;
+
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -21,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@MockBean(NoticeRepository.class)
+//@MockBean(NoticeRepository.class)
 public class ApiControllerTest {
     String EXPECTED_METHOD_STRING = "GET";
     String EXPECTED_RESULT_STRING = "{\"id\":0,\"title\":\"notice0\",\"content\":\"content of notice0\",\"regDate\":\"2022-09-30T00:00:00\"}";
@@ -172,7 +176,7 @@ public class ApiControllerTest {
         assertEquals("POST", httpMethod);
 
         String resultString = result.getResponse().getContentAsString();
-
+        System.out.println(resultString);
 
     }
 
@@ -182,12 +186,23 @@ public class ApiControllerTest {
 
         String content = "{\"title\": \"t\", \"content\": \"c\"}";
 
-        MvcResult result = (MvcResult) mockMvc.perform(get("/api/notice/1")
+        MvcResult result = (MvcResult) mockMvc.perform(get("/api/notice/2")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content))
                 .andDo(print())
                 .andReturn();
         String resultString = result.getResponse().getContentAsString();
+
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, String> responseResult;
+        try {
+            responseResult = mapper.readValue(resultString, Map.class);
+            assertEquals(0,responseResult.get("viewCnt"));
+            assertEquals(0,responseResult.get("likes"));
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
     }
 
 }

@@ -31,9 +31,13 @@ public class Notice {
     private LocalDateTime regDate;
 
     @Column
+    private LocalDateTime updateDate;
+
+    @Column
     private int viewCnt;
 
     @Column
     private int likes;
+
 
 }

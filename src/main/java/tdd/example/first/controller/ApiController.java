@@ -36,8 +36,8 @@ public class ApiController {
         return notice;
     }
 
-    @GetMapping("/api/notice2")
-    public List<NoticeModel> getNotice2(){
+    @GetMapping("/api/noticeList")
+    public List<NoticeModel> getNoticeList(){
         List<NoticeModel> noticeList = new ArrayList<>();
 
         // setter
@@ -118,15 +118,15 @@ public class ApiController {
 
         return notice;
     }
-
+    int INIT_CNT = 0;
     @PostMapping("/api/notice2")
     public Notice addNotice2(@RequestBody NoticeInput noticeInput){
         Notice notice = Notice.builder()
                 .title(noticeInput.getTitle())
                 .content(noticeInput.getContent())
                 .regDate(LocalDateTime.now())
-                .likes(0)
-                .viewCnt(0)
+                .likes(INIT_CNT)
+                .viewCnt(INIT_CNT)
                 .build();
         Notice resultNotice = noticeRepository.save(notice);
 
@@ -140,8 +140,22 @@ public class ApiController {
             return notice.get();
         }
 
-        // 나중에 throw except 하는게 더 좋음
+        // 나중에 throw exception
         return null;
 
     }
+
+    @PutMapping("api/notice/{id}")
+    public void updateNotice(@PathVariable long id, @RequestBody NoticeInput noticeInput){
+        Optional<Notice> notice = noticeRepository.findById(id);
+        if (notice.isPresent()){
+            notice.get().setTitle(noticeInput.getTitle());
+            notice.get().setContent(noticeInput.getContent());
+            notice.get().setUpdateDate(LocalDateTime.now());
+            //notice 는 optional 이기 때문에 getter로 받아야함
+            noticeRepository.save(notice.get());
+        }
+
+    }
+
 }

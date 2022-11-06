@@ -8,5 +8,7 @@ create table NOTICE(
 
     VIEW_CNT    INTEGER,
     LIKES       INTEGER,
-    REG_DATE    TIMESTAMP
+
+    REG_DATE    TIMESTAMP,
+    UPDATE_DATE TIMESTAMP
 );
