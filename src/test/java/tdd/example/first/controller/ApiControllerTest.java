@@ -205,4 +205,10 @@ public class ApiControllerTest {
 
     }
 
+    @Test
+    @DisplayName("id로 조회되는 DB 데이터를 수정하는 api")
+    public void testupdateDBdataAPI() throws Exception {
+        //update data test case
+    }
+
 }

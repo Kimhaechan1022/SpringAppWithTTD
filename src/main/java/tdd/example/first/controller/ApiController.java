@@ -1,8 +1,11 @@
 package tdd.example.first.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tdd.example.first.entity.Notice;
+import tdd.example.first.exceptions.ItemNotFoundException;
 import tdd.example.first.model.NoticeInput;
 import tdd.example.first.model.NoticeModel;
 import tdd.example.first.repository.NoticeRepository;
@@ -145,17 +148,44 @@ public class ApiController {
 
     }
 
+    @ExceptionHandler(ItemNotFoundException.class)
+    public ResponseEntity<String> handlerItemNotFoundException(ItemNotFoundException exception){
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
     @PutMapping("api/notice/{id}")
     public void updateNotice(@PathVariable long id, @RequestBody NoticeInput noticeInput){
-        Optional<Notice> notice = noticeRepository.findById(id);
-        if (notice.isPresent()){
-            notice.get().setTitle(noticeInput.getTitle());
-            notice.get().setContent(noticeInput.getContent());
-            notice.get().setUpdateDate(LocalDateTime.now());
-            //notice 는 optional 이기 때문에 getter로 받아야함
-            noticeRepository.save(notice.get());
-        }
+//        Optional<Notice> notice = noticeRepository.findById(id);
+//        if (!notice.isPresent()){
+//            throw new ItemNotFoundException("해당 id로 조회되는 글이 없습니다.");
+//        }  //notice.get 사용하지 않아도 된다.
 
+        Notice notice = noticeRepository.findById(id)
+                        .orElseThrow(()-> new ItemNotFoundException("해당 id로 조회되는 글이 없습니다."));
+
+        notice.setTitle(noticeInput.getTitle());
+        notice.setContent(noticeInput.getContent());
+        notice.setUpdateDate(LocalDateTime.now());
+        noticeRepository.save(notice);
+
+    }
+
+    @PatchMapping("/api/notice/{id}/plus")
+    public void ViewCntPlusOne(@PathVariable Long id){
+
+        Notice notice = noticeRepository.findById(id)
+                .orElseThrow(()-> new ItemNotFoundException("해당 id로 조회되는 글이 없습니다."));
+
+        notice.setViewCnt(notice.getViewCnt()+1);
+        noticeRepository.save(notice);
+
+    }
+
+    @DeleteMapping("/api/notice/{id}")
+    public void deleteItem(@PathVariable Long id){
+        Notice notice = noticeRepository.findById(id)
+                .orElseThrow(()-> new ItemNotFoundException("해당 id로 조회되는 글이 없습니다."));
+        noticeRepository.delete(notice);
     }
 
 }
