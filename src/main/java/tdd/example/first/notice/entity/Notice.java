@@ -1,4 +1,4 @@
-package tdd.example.first.entity;
+package tdd.example.first.notice.entity;
 
 
 import lombok.AllArgsConstructor;

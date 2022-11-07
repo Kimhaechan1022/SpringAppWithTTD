@@ -1,4 +1,4 @@
-package tdd.example.first.controller;
+package tdd.example.first.notice.controller;
 
 
 import org.springframework.stereotype.Controller;

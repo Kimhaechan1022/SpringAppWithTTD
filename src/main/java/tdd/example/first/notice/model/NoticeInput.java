@@ -1,4 +1,4 @@
-package tdd.example.first.model;
+package tdd.example.first.notice.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

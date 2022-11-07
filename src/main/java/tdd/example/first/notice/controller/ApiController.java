@@ -1,14 +1,14 @@
-package tdd.example.first.controller;
+package tdd.example.first.notice.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tdd.example.first.entity.Notice;
-import tdd.example.first.exceptions.ItemNotFoundException;
-import tdd.example.first.model.NoticeInput;
-import tdd.example.first.model.NoticeModel;
-import tdd.example.first.repository.NoticeRepository;
+import tdd.example.first.notice.entity.Notice;
+import tdd.example.first.notice.exceptions.ItemNotFoundException;
+import tdd.example.first.notice.model.NoticeModel;
+import tdd.example.first.notice.model.NoticeInput;
+import tdd.example.first.notice.repository.NoticeRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

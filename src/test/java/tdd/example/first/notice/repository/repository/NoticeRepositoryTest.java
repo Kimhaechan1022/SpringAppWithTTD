@@ -1,13 +1,14 @@
-package tdd.example.first.repository;
+package tdd.example.first.notice.repository.repository;
 
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import tdd.example.first.entity.Notice;
+import tdd.example.first.notice.entity.Notice;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
+import tdd.example.first.notice.repository.NoticeRepository;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
