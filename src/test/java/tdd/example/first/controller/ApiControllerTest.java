@@ -10,6 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import tdd.example.first.exceptions.ItemNotFoundException;
 import tdd.example.first.repository.NoticeRepository;
 
 import java.io.IOException;
@@ -17,8 +18,7 @@ import java.util.Map;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -193,7 +193,7 @@ public class ApiControllerTest {
                 .andReturn();
         String resultString = result.getResponse().getContentAsString();
 
-        ObjectMapper mapper = new ObjectMapper();
+         ObjectMapper mapper = new ObjectMapper();
         Map<String, String> responseResult;
         try {
             responseResult = mapper.readValue(resultString, Map.class);
@@ -206,9 +206,83 @@ public class ApiControllerTest {
     }
 
     @Test
-    @DisplayName("id로 조회되는 DB 데이터를 수정하는 api")
-    public void testupdateDBdataAPI() throws Exception {
-        //update data test case
+    @DisplayName("id로 조회되는 DB 데이터를 수정하는 API")
+    public void testUpdateDBdataAPI() throws Exception {
+
+        //given
+        String updateTitle = "updatedTitle1";
+        String updateContent = "updatedContent2";
+        String requestContent = "{\"title\":\"" + updateTitle + "\", \"content\":\"" + updateContent + "\"}";
+
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, String> responseResult;
+
+        //when
+        mockMvc.perform(put("/api/notice/1")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(requestContent));
+
+        MvcResult result = (MvcResult) mockMvc.perform(get("/api/notice/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestContent))
+                .andDo(print())
+                .andReturn();
+
+        //then
+        try {
+            responseResult = mapper.readValue(result.getResponse().getContentAsString(), Map.class);
+            assertEquals(updateTitle,responseResult.get("title"));
+            assertEquals(updateContent,responseResult.get("content"));
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+    }
+
+    @Test
+    @DisplayName("타겟 id로 조회한 게시글의 조회수를 올리는 API")
+    public void testPlusViewCnt() throws Exception {
+
+        //given
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> responseResult;
+
+        MvcResult result = (MvcResult) mockMvc.perform(get("/api/notice/1"))
+                .andReturn();
+
+        responseResult = mapper.readValue(result.getResponse().getContentAsString(), Map.class);
+        int originCnt = (int) responseResult.get("viewCnt");
+
+
+        //when
+        mockMvc.perform(patch("/api/notice/1/plus"));
+        MvcResult result2 = (MvcResult) mockMvc.perform(get("/api/notice/1"))
+                .andReturn();
+        responseResult = mapper.readValue(result2.getResponse().getContentAsString(), Map.class);
+        int updatedCnt = (int) responseResult.get("viewCnt");
+
+        //then
+        assertEquals(originCnt+1,updatedCnt);
+
+    }
+
+    @Test
+    @DisplayName("delete Item By Id api test")
+    public void testDeleteItemById() throws Exception{
+        //given
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> responseResult;
+
+        mockMvc.perform(delete("/api/notice/1"))
+                .andReturn();
+
+        try {
+            MvcResult result2 = (MvcResult) mockMvc.perform(get("/api/notice/1"))
+                    .andReturn();
+        }catch (ItemNotFoundException e){
+            assertEquals(e.getMessage(),"해당 id로 조회되는 글이 없습니다.");
+        }
+
     }
 
 }

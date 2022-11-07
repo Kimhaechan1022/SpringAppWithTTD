@@ -143,8 +143,7 @@ public class ApiController {
             return notice.get();
         }
 
-        // 나중에 throw exception
-        return null;
+        throw new ItemNotFoundException("해당 id로 조회되는 글이 없습니다.");
 
     }
 
